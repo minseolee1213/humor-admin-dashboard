@@ -9,14 +9,14 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-export async function createWhitelistedEmail(formData: FormData) {
+export async function createWhitelistedEmail(formData: FormData): Promise<void> {
   await requireSuperadmin();
   const supabase = createServerClient();
 
   const email = (formData.get('email_address') as string | null)?.trim() ?? '';
 
   if (!isValidEmail(email)) {
-    return { error: 'Please enter a valid email address.' };
+    throw new Error('Please enter a valid email address.');
   }
 
   const { error } = await supabase.from('whitelist_email_addresses').insert({
@@ -24,11 +24,10 @@ export async function createWhitelistedEmail(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath('/admin/whitelisted-emails');
-  return { success: true };
 }
 
 export async function updateWhitelistedEmail(formData: FormData) {

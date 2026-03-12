@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireSuperadmin } from '@/lib/auth/require-superadmin';
 import { createServerClient } from '@/lib/supabase/server-client';
 
-export async function updateHumorMix(formData: FormData) {
+export async function updateHumorMix(formData: FormData): Promise<void> {
   await requireSuperadmin();
   const supabase = createServerClient();
 
@@ -15,7 +15,7 @@ export async function updateHumorMix(formData: FormData) {
   const caption_count = Number.isNaN(parsed) ? null : parsed;
 
   if (caption_count === null || caption_count < 0) {
-    return { error: 'Caption count must be a non-negative integer.' };
+    throw new Error('Caption count must be a non-negative integer.');
   }
 
   const { error } = await supabase
@@ -24,10 +24,9 @@ export async function updateHumorMix(formData: FormData) {
     .eq('id', id);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath('/admin/humor-mix');
-  return { success: true };
 }
 
