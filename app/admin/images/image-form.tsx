@@ -7,7 +7,7 @@ import { createImage, updateImage } from './actions';
 interface ImageFormProps {
   image?: {
     id: string;
-    url: string;
+    url: string | null;
     additional_context?: string | null;
     is_public?: boolean;
     is_common_use?: boolean;

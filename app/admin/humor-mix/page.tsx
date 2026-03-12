@@ -37,6 +37,11 @@ export default async function AdminHumorMixPage() {
     data: { session },
   } = await supabaseSession.auth.getSession();
 
+  // Wrapper action to satisfy Next.js/TypeScript form action typing (Promise<void>).
+  const handleHumorMixUpdate = async (formData: FormData) => {
+    await updateHumorMix(formData);
+  };
+
   return (
     <AdminLayout userEmail={session?.user.email}>
       <div className="mb-8">
@@ -90,7 +95,7 @@ export default async function AdminHumorMixPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        <form action={updateHumorMix} className="flex items-center gap-2">
+                        <form action={handleHumorMixUpdate} className="flex items-center gap-2">
                           <input type="hidden" name="id" value={row.id} />
                           <input
                             type="number"
