@@ -22,6 +22,11 @@ export default async function AdminWhitelistedEmailsPage() {
     .select('*')
     .order('created_datetime_utc', { ascending: false });
 
+  // Wrapper action so the form action type matches `Promise<void>`.
+  const handleCreateWhitelistedEmail = async (formData: FormData) => {
+    await createWhitelistedEmail(formData);
+  };
+
   const supabaseSession = await createServerComponentClient();
   const {
     data: { session },
@@ -41,7 +46,7 @@ export default async function AdminWhitelistedEmailsPage() {
 
       <div className="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Email</h2>
-        <form action={createWhitelistedEmail} className="flex flex-col sm:flex-row gap-3 sm:items-center">
+        <form action={handleCreateWhitelistedEmail} className="flex flex-col sm:flex-row gap-3 sm:items-center">
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-700 mb-1" htmlFor="email_address">
               Email address
