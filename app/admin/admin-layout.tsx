@@ -15,13 +15,45 @@ export default function AdminLayout({ children, userEmail }: AdminLayoutProps) {
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/users', label: 'Users' },
-    { href: '/admin/images', label: 'Images' },
-    { href: '/admin/captions', label: 'Captions' },
+    { href: '/admin/content', label: 'Content' },
+    { href: '/admin/llm', label: 'LLM' },
+    { href: '/admin/catalog', label: 'Catalog' },
+    { href: '/admin/access', label: 'Access' },
   ];
 
   const isActive = (href: string) => {
     if (href === '/admin') {
       return pathname === '/admin';
+    }
+    if (href === '/admin/content') {
+      return (
+        pathname.startsWith('/admin/content') ||
+        pathname.startsWith('/admin/images') ||
+        pathname.startsWith('/admin/captions') ||
+        pathname.startsWith('/admin/caption-requests') ||
+        pathname.startsWith('/admin/humor-flavors') ||
+        pathname.startsWith('/admin/humor-flavor-steps')
+      );
+    }
+    if (href === '/admin/llm') {
+      return (
+        pathname.startsWith('/admin/llm') ||
+        pathname.startsWith('/admin/llm-providers') ||
+        pathname.startsWith('/admin/llm-models') ||
+        pathname.startsWith('/admin/llm-responses') ||
+        pathname.startsWith('/admin/llm-prompt-chains') ||
+        pathname.startsWith('/admin/humor-mix')
+      );
+    }
+    if (href === '/admin/catalog') {
+      return pathname.startsWith('/admin/catalog') || pathname.startsWith('/admin/terms') || pathname.startsWith('/admin/caption-examples');
+    }
+    if (href === '/admin/access') {
+      return (
+        pathname.startsWith('/admin/access') ||
+        pathname.startsWith('/admin/allowed-signup-domains') ||
+        pathname.startsWith('/admin/whitelisted-emails')
+      );
     }
     return pathname.startsWith(href);
   };

@@ -2,6 +2,7 @@ import { requireSuperadmin } from '@/lib/auth/require-superadmin';
 import { createServerClient } from '@/lib/supabase/server-client';
 import { createServerComponentClient } from '@/lib/supabase/server-component-client';
 import AdminLayout from '../admin-layout';
+import AdminBackButton from '../admin-back-button';
 
 function formatDate(dateString: string | null | undefined): string {
   if (!dateString) return 'N/A';
@@ -38,6 +39,9 @@ export default async function AdminCaptionsPage() {
   return (
     <AdminLayout userEmail={session?.user.email}>
       <div className="mb-8">
+        <div className="mb-4">
+          <AdminBackButton />
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Captions</h1>
         <p className="text-base text-gray-600">
           View and manage all captions

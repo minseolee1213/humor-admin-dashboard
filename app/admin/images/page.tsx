@@ -2,6 +2,7 @@ import { requireSuperadmin } from '@/lib/auth/require-superadmin';
 import { createServerClient } from '@/lib/supabase/server-client';
 import { createServerComponentClient } from '@/lib/supabase/server-component-client';
 import AdminLayout from '../admin-layout';
+import AdminBackButton from '../admin-back-button';
 import ImagesTable from './images-table';
 import ImageForm from './image-form';
 
@@ -23,6 +24,9 @@ export default async function AdminImagesPage() {
   return (
     <AdminLayout userEmail={session?.user.email}>
       <div className="mb-8">
+        <div className="mb-4">
+          <AdminBackButton />
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Images</h1>
         <p className="text-base text-gray-600">
           Create, view, update, and delete images

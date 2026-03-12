@@ -3,18 +3,22 @@ import { createServerClient } from '@/lib/supabase/server-client';
 import { createServerComponentClient } from '@/lib/supabase/server-component-client';
 import AdminLayout from '../admin-layout';
 import AdminBackButton from '../admin-back-button';
-import UsersTable from './users-table';
+import LlmProviderForm, { type LlmProvider } from './llm-provider-form';
+import LlmProvidersTable from './llm-providers-table';
 
-export default async function AdminUsersPage() {
+export default async function AdminLlmProvidersPage() {
   await requireSuperadmin();
 
   const supabase = createServerClient();
-  const { data: profiles, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_datetime_utc', { ascending: false });
+  const { data, error } = await supabase.from('llm_providers').select('*').order('id', { ascending: true });
 
-  // Get user session for display
+  const providers: LlmProvider[] =
+    (data ?? []).map((row: any) => ({
+      id: row.id,
+      created_datetime_utc: row.created_datetime_utc,
+      name: row.name,
+    })) ?? [];
+
   const supabaseSession = await createServerComponentClient();
   const {
     data: { session },
@@ -26,23 +30,27 @@ export default async function AdminUsersPage() {
         <div className="mb-4">
           <AdminBackButton />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Users</h1>
-        <p className="text-base text-gray-600">
-          Manage user profiles and permissions
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">LLM Providers</h1>
+        <p className="text-base text-gray-600">Create, update, and delete LLM providers.</p>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Provider</h2>
+        <LlmProviderForm />
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-200/60 shadow-sm">
         {error ? (
           <div className="px-6 py-4">
             <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              Error loading profiles: {error.message}
+              Error loading providers: {error.message}
             </div>
           </div>
         ) : (
-          <UsersTable profiles={profiles || []} />
+          <LlmProvidersTable providers={providers} />
         )}
       </div>
     </AdminLayout>
   );
 }
+

@@ -19,7 +19,7 @@ function formatDate(dateString: string | null | undefined): string {
 
 interface Image {
   id: string;
-  url: string;
+  url: string | null;
   created_datetime_utc?: string | null;
   modified_datetime_utc?: string | null;
   is_public?: boolean;
@@ -141,14 +141,18 @@ export default function ImagesTable({ images }: ImagesTableProps) {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <a
-                      href={image.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-gray-900 hover:text-gray-600 break-all"
-                    >
-                      {image.url.length > 40 ? `${image.url.substring(0, 40)}...` : image.url}
-                    </a>
+                    {image.url ? (
+                      <a
+                        href={image.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-gray-900 hover:text-gray-600 break-all"
+                      >
+                        {image.url.length > 40 ? `${image.url.substring(0, 40)}...` : image.url}
+                      </a>
+                    ) : (
+                      <span className="text-sm text-gray-400">N/A</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {image.is_public ? (

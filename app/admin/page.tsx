@@ -3,6 +3,7 @@ import { createServerComponentClient } from '@/lib/supabase/server-component-cli
 import { getDashboardStats } from '@/lib/admin/dashboard-stats';
 import AdminLayout from './admin-layout';
 import Link from 'next/link';
+import AdminBackButton from './admin-back-button';
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -41,6 +42,9 @@ export default async function AdminPage() {
     <AdminLayout userEmail={session.user.email}>
       {/* Page header */}
       <div className="mb-10">
+        <div className="mb-4">
+          <AdminBackButton />
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
         <p className="text-base text-gray-600">
           Track platform activity, monitor content health, and spot what needs attention.
