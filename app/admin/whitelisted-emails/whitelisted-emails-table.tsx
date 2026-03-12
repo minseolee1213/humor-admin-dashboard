@@ -24,6 +24,16 @@ export default function WhitelistedEmailsTable({ emails }: Props) {
   const [pendingId, setPendingId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const onUpdate = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    startTransition(async () => {
+      await updateWhitelistedEmail(formData);
+    });
+  };
+
   const onDelete = (id: number, email: string) => {
     if (!confirm(`Delete whitelisted email "${email}"?`)) return;
     setPendingId(id);
@@ -61,7 +71,7 @@ export default function WhitelistedEmailsTable({ emails }: Props) {
             emails.map((row) => (
               <tr key={row.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <form action={updateWhitelistedEmail} className="flex items-center gap-2">
+                  <form onSubmit={onUpdate} className="flex items-center gap-2">
                     <input type="hidden" name="id" value={row.id} />
                     <input
                       name="email_address"
