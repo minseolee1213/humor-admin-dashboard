@@ -21,9 +21,11 @@ interface UsersTableProps {
 type SortKey = 'created_datetime_utc' | 'email' | 'is_superadmin';
 
 export default function UsersTable({ profiles }: UsersTableProps) {
+  const PAGE_SIZE = 25;
   const [query, setQuery] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('created_datetime_utc');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -77,100 +79,103 @@ export default function UsersTable({ profiles }: UsersTableProps) {
       setSortDir(key === 'email' ? 'asc' : 'desc');
     }
   };
-
-  const sortIcon = (key: SortKey) => {
-    if (sortKey !== key) return null;
-    return sortDir === 'asc' ? '↑' : '↓';
-  };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pagedRows = filtered.slice(pageStart, pageStart + PAGE_SIZE);
 
   if (profiles.length === 0) {
     return (
-      <div className="px-6 py-8 text-center">
-        <p className="text-sm text-gray-500">No profiles found</p>
+      <div className="px-6 py-12 text-center">
+        <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No users found yet.</p>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Profiles will appear here after users sign in.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <input
             type="text"
             placeholder="Search by email, name, or ID…"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="block w-full sm:max-w-xs rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
+            className="block w-full sm:max-w-xs rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
-          <p className="text-sm text-gray-600">
-            Showing <span className="font-medium text-gray-900">{filtered.length}</span> of{' '}
-            <span className="font-medium text-gray-900">{profiles.length}</span>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{filtered.length}</span> of{' '}
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{profiles.length}</span>
           </p>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+          <thead className="bg-slate-50 dark:bg-slate-900/70">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Superadmin
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 In Study
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Matrix Admin
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Created
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filtered.map((profile) => (
-              <tr key={profile.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {profile.email || <span className="text-gray-500">N/A</span>}
+          <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900/50">
+            {pagedRows.map((profile) => (
+              <tr key={profile.id} className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
+                  {profile.email || <span className="text-slate-500 dark:text-slate-400">N/A</span>}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
                   {profile.first_name || profile.last_name
                     ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
-                    : <span className="text-gray-500">N/A</span>}
+                    : <span className="text-slate-500 dark:text-slate-400">N/A</span>}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="whitespace-nowrap px-6 py-4">
                   {profile.is_superadmin ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300">
                       Yes
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500">No</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">No</span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="whitespace-nowrap px-6 py-4">
                   {profile.is_in_study ? (
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
                       Yes
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500">No</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">No</span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="whitespace-nowrap px-6 py-4">
                   {profile.is_matrix_admin ? (
-                    <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800">
+                    <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800 dark:bg-purple-500/20 dark:text-purple-300">
                       Yes
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500">No</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">No</span>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
                   {profile.created_datetime_utc
                     ? new Date(profile.created_datetime_utc).toLocaleDateString()
                     : 'N/A'}
@@ -179,6 +184,29 @@ export default function UsersTable({ profiles }: UsersTableProps) {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex items-center justify-between border-t border-slate-200 px-6 py-3 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+        <p>
+          Page {currentPage} of {totalPages}
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage <= 1}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:disabled:border-slate-800 dark:disabled:text-slate-500"
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage >= totalPages}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:disabled:border-slate-800 dark:disabled:text-slate-500"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

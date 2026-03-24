@@ -31,6 +31,15 @@ export async function requireSuperadmin(): Promise<string> {
   }
 
   const userId = session.user.id;
+  const provider = session.user.app_metadata?.provider;
+  const hasGoogleIdentity = session.user.identities?.some(
+    (identity) => identity.provider === 'google'
+  );
+
+  // Enforce Google-authenticated admin access.
+  if (provider !== 'google' && !hasGoogleIdentity) {
+    redirect('/login');
+  }
 
   // Step 2: Query profiles table using service role key (bypasses RLS)
   // This is safe because:

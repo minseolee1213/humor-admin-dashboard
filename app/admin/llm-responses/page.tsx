@@ -1,6 +1,7 @@
 import { requireSuperadmin } from '@/lib/auth/require-superadmin';
 import { createServerClient } from '@/lib/supabase/server-client';
 import { createServerComponentClient } from '@/lib/supabase/server-component-client';
+import Link from 'next/link';
 import AdminLayout from '../admin-layout';
 import AdminBackButton from '../admin-back-button';
 
@@ -21,15 +22,30 @@ function truncate(text: string | null | undefined, max = 120): string {
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
-export default async function AdminLlmResponsesPage() {
+const PAGE_SIZE = 50;
+
+interface AdminLlmResponsesPageProps {
+  searchParams?: Promise<{ page?: string }>;
+}
+
+export default async function AdminLlmResponsesPage({ searchParams }: AdminLlmResponsesPageProps) {
   await requireSuperadmin();
+  const params = (await searchParams) ?? {};
+  const parsedPage = Number.parseInt(params.page ?? '1', 10);
+  const currentPage = Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
   const supabase = createServerClient();
-  const { data: responses, error } = await supabase
+  const { data: responses, error, count } = await supabase
     .from('llm_model_responses')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('created_datetime_utc', { ascending: false })
-    .limit(200);
+    .range(from, to);
+  const totalCount = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const hasPrev = currentPage > 1;
+  const hasNext = currentPage < totalPages;
 
   const supabaseSession = await createServerComponentClient();
   const {
@@ -133,6 +149,30 @@ export default async function AdminLlmResponsesPage() {
             <p className="text-sm text-gray-500 text-center">No LLM responses found</p>
           </div>
         )}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+        <p>
+          Page {currentPage} of {totalPages} ({totalCount.toLocaleString()} total)
+        </p>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/admin/llm-responses?page=${Math.max(1, currentPage - 1)}`}
+            className={`rounded-md border px-3 py-1.5 ${
+              hasPrev ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 pointer-events-none'
+            }`}
+          >
+            Previous
+          </Link>
+          <Link
+            href={`/admin/llm-responses?page=${Math.min(totalPages, currentPage + 1)}`}
+            className={`rounded-md border px-3 py-1.5 ${
+              hasNext ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 pointer-events-none'
+            }`}
+          >
+            Next
+          </Link>
+        </div>
       </div>
     </AdminLayout>
   );

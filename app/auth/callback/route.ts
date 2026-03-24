@@ -12,6 +12,15 @@ export async function GET(request: Request) {
     
     // After successful login, check if user is superadmin
     if (session?.user) {
+      const provider = session.user.app_metadata?.provider;
+      const hasGoogleIdentity = session.user.identities?.some(
+        (identity) => identity.provider === 'google'
+      );
+
+      if (provider !== 'google' && !hasGoogleIdentity) {
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+
       const adminSupabase = createServerClient();
       const { data: profile } = await adminSupabase
         .from('profiles')

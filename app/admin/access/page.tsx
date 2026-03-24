@@ -25,24 +25,28 @@ export default async function AdminAccessLandingPage() {
         <div className="mb-4">
           <AdminBackButton />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Access</h1>
-        <p className="text-base text-gray-600">Signup and access control lists.</p>
+        <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-100">Access</h1>
+        <p className="text-base text-slate-600 dark:text-slate-300">Signup and access control lists.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-7">
-        <div className="space-y-2">
+      <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-7 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Sections</h2>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{items.length} items</span>
+        </div>
+        <div className="space-y-3">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="group block rounded-2xl border border-gray-200/60 px-5 py-4 hover:bg-gray-50/80 hover:border-gray-300/70 hover:shadow-sm transition-all"
+              className="group block rounded-xl border border-slate-200/80 bg-slate-50/40 px-5 py-4 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:shadow-sm dark:border-slate-700/80 dark:bg-slate-800/30 dark:hover:border-slate-600 dark:hover:bg-slate-800"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-gray-900">{item.label}</div>
-                  <div className="text-xs text-gray-500 mt-1">{item.description}</div>
+                  <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{item.label}</div>
+                  <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.description}</div>
                 </div>
-                <span className="text-base text-gray-400 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-transform">
+                <span className="text-base text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-slate-600 dark:group-hover:text-slate-200">
                   →
                 </span>
               </div>

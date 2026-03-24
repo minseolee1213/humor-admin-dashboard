@@ -45,38 +45,38 @@ export default async function AdminPage() {
         <div className="mb-4">
           <AdminBackButton />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-        <p className="text-base text-gray-600">
+        <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-100">Admin Dashboard</h1>
+        <p className="text-base text-slate-600 dark:text-slate-300">
           Track platform activity, monitor content health, and spot what needs attention.
         </p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-10">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Total Images</p>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total Images</p>
+          <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.totalImages.toLocaleString()}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Total Captions</p>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total Captions</p>
+          <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.totalCaptions.toLocaleString()}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Public Captions</p>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Public Captions</p>
+          <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.publicCaptions.toLocaleString()}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Profiles</p>
-          <p className="text-3xl font-bold text-green-600">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Profiles</p>
+          <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.totalUsers.toLocaleString()}
           </p>
         </div>

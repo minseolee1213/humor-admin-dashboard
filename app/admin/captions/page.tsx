@@ -1,6 +1,7 @@
 import { requireSuperadmin } from '@/lib/auth/require-superadmin';
 import { createServerClient } from '@/lib/supabase/server-client';
 import { createServerComponentClient } from '@/lib/supabase/server-component-client';
+import Link from 'next/link';
 import AdminLayout from '../admin-layout';
 import AdminBackButton from '../admin-back-button';
 
@@ -21,14 +22,30 @@ function truncateText(text: string | null | undefined, maxLength: number): strin
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 }
 
-export default async function AdminCaptionsPage() {
+const PAGE_SIZE = 50;
+
+interface AdminCaptionsPageProps {
+  searchParams?: Promise<{ page?: string }>;
+}
+
+export default async function AdminCaptionsPage({ searchParams }: AdminCaptionsPageProps) {
   await requireSuperadmin();
+  const params = (await searchParams) ?? {};
+  const parsedPage = Number.parseInt(params.page ?? '1', 10);
+  const currentPage = Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
   const supabase = createServerClient();
-  const { data: captions, error } = await supabase
+  const { data: captions, error, count } = await supabase
     .from('captions')
-    .select('*')
+    .select('*', { count: 'exact' })
+    .range(from, to)
     .order('created_datetime_utc', { ascending: false });
+  const totalCount = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const hasPrev = currentPage > 1;
+  const hasNext = currentPage < totalPages;
 
   // Get user session for display
   const supabaseSession = await createServerComponentClient();
@@ -131,6 +148,30 @@ export default async function AdminCaptionsPage() {
               <p className="text-sm text-gray-500 text-center">No captions found</p>
             </div>
           )}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+        <p>
+          Page {currentPage} of {totalPages} ({totalCount.toLocaleString()} total)
+        </p>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/admin/captions?page=${Math.max(1, currentPage - 1)}`}
+            className={`rounded-md border px-3 py-1.5 ${
+              hasPrev ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 pointer-events-none'
+            }`}
+          >
+            Previous
+          </Link>
+          <Link
+            href={`/admin/captions?page=${Math.min(totalPages, currentPage + 1)}`}
+            className={`rounded-md border px-3 py-1.5 ${
+              hasNext ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-gray-200 text-gray-400 pointer-events-none'
+            }`}
+          >
+            Next
+          </Link>
+        </div>
       </div>
     </AdminLayout>
   );
