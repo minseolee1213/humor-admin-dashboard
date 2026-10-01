@@ -1,11 +1,8 @@
-# Admin schema reference (confirmed)
+# Admin schema reference
 
-This document is the **source of truth for the admin UI**. It is derived from Supabase `information_schema.columns` and `information_schema.table_constraints` output pasted from the Supabase SQL editor.
+Column and foreign-key notes for the tables this admin app reads and writes. The lists come from Supabase `information_schema` output. Queries, sorts, and forms in this repo use these columns only.
 
-**Rules**
-- Use **only** these confirmed columns in `select()`, `order()`, tables, and forms.
-- Do **not** guess columns.
-- Do **not** change Supabase RLS policies.
+This repository does not define or modify Row Level Security policies. Those stay in the Supabase project.
 
 ## Tables (confirmed columns)
 

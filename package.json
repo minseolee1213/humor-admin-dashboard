@@ -1,4 +1,7 @@
 {
+  "name": "humor-admin-dashboard",
+  "private": true,
+  "description": "Full-stack admin console for a humor-captioning platform, with Google auth, superadmin authorization, and Supabase/PostgreSQL data management.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
